@@ -1,0 +1,14 @@
+body {
+    background-color: rgb(117, 101, 174);
+}
+
+.navbar {
+    background-color: rgb(86, 68, 149);
+    border: 1px solid black;
+}
+.---bs-info-rgb {
+    --bs-info-rgb: 61, 42, 125;
+    background-color: rgb(var(--bs-info-rgb));
+}
+
+
