@@ -7,6 +7,11 @@ app.get('/',  (req, res) => {
    res.render("home.ejs");
 });
 
+// Sign in Page
+app.get('/signin', (req, res) => {
+   res.render('signin.ejs')
+});
+
 
 app.get('/search', async (req, res) => {
    // -----API STUFF -------
