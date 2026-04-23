@@ -23,7 +23,7 @@ app.get('/search', async (req, res) => {
       }
    };
 
-   //   ----API SEARCH STUFF -----
+   //   ----MOVIE API SEARCH STUFF -----
    const user_search = req.query.search || "";// search is the name of the input name in navbar.ejs
 
    const movies = [];
@@ -33,6 +33,7 @@ app.get('/search', async (req, res) => {
          `https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(user_search)}&include_adult=false&language=en-US&page=1`,
          options
       );
+
 
       const data = await response.json();
 
@@ -48,6 +49,8 @@ app.get('/search', async (req, res) => {
    }
 
    console.log("Movies sent to search page:", movies);
+
+   
 
    res.render("search.ejs", { movies });
 });
