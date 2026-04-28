@@ -9,10 +9,42 @@
 <%- include('partials/header.ejs') %>
 
     <body>
-        <h1 class="---bs-info-rgb text-white text-center p-3 m-0"> Info Theater </h1>
+        <h1 class="bg-info-rgb text-white text-center p-3 m-0">Info Theater</h1>
         <%- include('partials/navbar.ejs') %>
 
-        <h5> Welcome to the <em>InfoTheather</em>! </h5>
-    </body>
+        <!-- 🔥 THIS is what puts them in the same row -->
+        <div class="row align-items-center">
 
+            <!-- Left side: Movie -->
+            <div class="col-md-5 text-center mt-5">
+                <h3>Suggested Movie</h3>
+
+                <img 
+                    src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" 
+                    alt="<%= movie.title %>" 
+                    class="img-fluid rounded shadow pt-3"
+                >
+
+                <h4 class="mt-3"><%= movie.title %></h4>
+            </div>
+
+            <!-- Right side: About -->
+            <div class="col-md-7 d-flex justify-content-center">
+                <div class="aboutSection">
+                    <h3>About InfoTheater</h3>
+
+                    <p>
+                        Our website allows you to explore movies, learn more about your favorite films, 
+                        and discover what your next watch is going to be!
+                    </p>
+
+                    <p>
+                        If you find a movie that interests you but don’t have time to watch it yet, 
+                        you can add it to your watchlist and come back to it later.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </body>
 </html>

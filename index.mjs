@@ -13,9 +13,11 @@ app.get('/',  async (req, res) => {
    };
 
    const response = await fetch('https://api.themoviedb.org/3/discover/movie',options);
-   const movies = await response.json();
+   const data = await response.json();
+   const movies = data.results;
+   const randomMovie = movies[Math.floor(Math.random() * movies.length)];
 
-   res.render("home.ejs" );
+   res.render("home.ejs", {movie: randomMovie});
 });
 
 // Sign in Page
