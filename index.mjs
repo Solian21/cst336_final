@@ -3,8 +3,21 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-app.get('/',  (req, res) => {
-   res.render("home.ejs");
+app.get('/',  async (req, res) => {
+   const options = {
+      method: 'GET',
+      headers: {
+         accept: 'application/json',
+         Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZjcyZTdhNTg3OGJhNTYyOGJmMDgzNWNhNGZjMGNmYyIsIm5iZiI6MTc3NDM3MDM4MC4zOCwic3ViIjoiNjljMmJlNGNkOWVlMGEyZGJiN2JjYzMwIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.A6PJgrCtyusFUW9ueoWDMma1nNUU0e_5C-ZDyYg8ye8'
+      }
+   };
+
+   const response = await fetch('https://api.themoviedb.org/3/discover/movie',options);
+   const data = await response.json();
+   const movies = data.results;
+   const randomMovie = movies[Math.floor(Math.random() * movies.length)];
+
+   res.render("home.ejs", {movie: randomMovie});
 });
 
 // Sign in Page

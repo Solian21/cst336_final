@@ -11,4 +11,8 @@ body {
     background-color: rgb(var(--bs-info-rgb));
 }
 
+.aboutSection{
+    max-width: 525px;
+    width: 100%;
+}
 
