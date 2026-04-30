@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/header.ejs') %>
+
+    <body class="text-center">
+
+        <h1 class="m-5"> Sign Up </h1>
+        <form action="/signup" method="POST" class="w-25 m-auto">
+            Username:
+            <div class="loginDiv">
+                <input type="text" name="username">
+                <span class="bi bi-person loginIcon"></span>
+            </div><br><br>
+
+            Password:
+            <div class="loginDiv">
+                <input type="password" id="pwd" name="password">
+                <span class="bi bi-eye loginIcon" id="eyeIcon"></span>
+            </div><br><br>
+            <button class="btn btn-success">Login</button>
+        </form>
+        <script>
+            const eyeIcon = document.querySelector("#eyeIcon");;
+            eyeIcon.addEventListener("click", () => {
+                const isHidden = pwd.type === "password";
+                pwd.type = (isHidden) ? "text" : "password";
+                eyeIcon.classList.toggle("bi-eye", !isHidden);
+                eyeIcon.classList.toggle("bi-eye-slash", isHidden);
+            });
+        </script>
+
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
+    </body>
+
+</html>

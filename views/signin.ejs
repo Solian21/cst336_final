@@ -3,20 +3,38 @@
 
 <%- include('partials/header.ejs') %>
 
-    <body>
-        <form>
-            <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                    else.</small>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+    <body class="text-center">
+
+        <h1 class="m-5"> Sign In </h1>
+        <form action="/signin" method="POST" class="w-25 m-auto">
+            Username:
+            <div class="loginDiv">
+                <input type="text" name="username">
+                <span class="bi bi-person loginIcon"></span>
+            </div><br><br>
+
+            Password:
+            <div class="loginDiv">
+                <input type="password" id="pwd" name="password">
+                <span class="bi bi-eye loginIcon" id="eyeIcon"></span>
+            </div><br><br>
+            <button class="btn btn-success">Login</button>
         </form>
+        <script>
+            const eyeIcon = document.querySelector("#eyeIcon");;
+            eyeIcon.addEventListener("click", () => {
+                const isHidden = pwd.type === "password";
+                pwd.type = (isHidden) ? "text" : "password";
+                eyeIcon.classList.toggle("bi-eye", !isHidden);
+                eyeIcon.classList.toggle("bi-eye-slash", isHidden);
+            });
+        </script>
+
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
     </body>
 
 </html>
