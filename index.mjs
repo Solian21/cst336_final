@@ -67,7 +67,8 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-   const { username, password } = req.body;
+   const { username, password, makeAdmin } = req.body;
+   const isAdmin = makeAdmin === "true" ? 1 : 0;
    try {
       const [existing] = await pool.query(
          "SELECT userId FROM users WHERE username = ?",
@@ -79,10 +80,10 @@ app.post('/signup', async (req, res) => {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      let sqlParameters = [username, hashedPassword];
+      let sqlParameters = [username, hashedPassword, isAdmin];
       let sql = `
         INSERT INTO users (username, password, isAdmin) 
-        VALUES (?, ?, 0)`;
+        VALUES (?, ?, ?)`;
       await pool.query(sql, sqlParameters);
 
       res.redirect('/');
@@ -99,7 +100,7 @@ app.get('/signin', (req, res) => {
 app.post('/signin', async (req, res) => {
    const { username, password } = req.body;
    try {
-      const [rows] = await pool.query("SELECT username, password FROM users WHERE username = ?", [username]);
+      const [rows] = await pool.query("SELECT userId, username, password, isAdmin FROM users WHERE username = ?", [username]);
       if (rows.length === 0) {
          return res.render('signin', { error: "Invalid username or password!" });
       }
@@ -119,6 +120,46 @@ app.post('/signin', async (req, res) => {
 app.get('/logout', (req, res) => {
    req.session.destroy();
    res.redirect('/');
+});
+
+app.get('/admin', requireAdmin, async (req, res) => {
+   const userSearch = req.query.userSearch || "";
+   let foundUser = null;
+
+   if (userSearch.trim() !== "") {
+      const [rows] = await pool.query(
+         `SELECT userId, username, isAdmin
+          FROM users
+          WHERE username = ?`,
+         [userSearch]
+      );
+
+      if (rows.length > 0) {
+         foundUser = rows[0];
+      }
+   }
+
+   res.render('admin.ejs', { foundUser, userSearch });
+});
+
+app.post('/admin/updateAdmin', requireAdmin, async (req, res) => {
+   const { userId, userSearch, isAdmin } = req.body;
+
+   const newAdminValue = isAdmin === "on" ? 1 : 0;
+
+//Not needed but prevents admins from removing themselves
+   if (Number(userId) === req.session.user.userId && newAdminValue === 0) {
+      return res.redirect(`/admin?userSearch=${encodeURIComponent(userSearch)}`);
+   }
+
+   await pool.query(
+      `UPDATE users
+       SET isAdmin = ?
+       WHERE userId = ?`,
+      [newAdminValue, userId]
+   );
+
+   res.redirect(`/admin?userSearch=${encodeURIComponent(userSearch)}`);
 });
 
 
