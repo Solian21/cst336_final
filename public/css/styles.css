@@ -6,7 +6,7 @@ body {
     background-color: rgb(86, 68, 149);
     border: 1px solid black;
 }
-.---bs-info-rgb {
+.bs-info-rgb {
     --bs-info-rgb: 61, 42, 125;
     background-color: rgb(var(--bs-info-rgb));
 }
@@ -16,3 +16,40 @@ body {
     width: 100%;
 }
 
+.secret-admin-signup {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 35px;
+    height: 35px;
+    background-color: rgb(117, 101, 174);
+    opacity: 0.02;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.admin-confirm-message {
+    display: none;
+    margin-top: 15px;
+    font-weight: bold;
+}
+.admin-page {
+    max-width: 900px;
+}
+
+.admin-panel {
+    background-color: rgba(255, 255, 255, 0.92);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.user-result-card {
+    background-color: rgb(230, 224, 250);
+    border-radius: 12px;
+    border-left: 6px solid rgb(86, 68, 149);
+}
+
+.form-check-input:checked {
+    background-color: rgb(86, 68, 149);
+    border-color: rgb(86, 68, 149);
+}

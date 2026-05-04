@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/header.ejs') %>
+
+    <body class="text-center">
+        <h1 class="bg-info-rgb text-white text-center p-3 m-0">Info Theater</h1>
+        <%- include('partials/navbar.ejs') %>
+        <h1 class="m-5"> Sign Up </h1>
+        <form action="/signup" method="POST" class="w-25 m-auto">
+            Username:
+            <div class="loginDiv">
+                <input type="text" name="username">
+                <span class="bi bi-person loginIcon"></span>
+            </div><br><br>
+
+            Password:
+            <div class="loginDiv">
+                <input type="password" id="pwd" name="password">
+                <span class="bi bi-eye loginIcon" id="eyeIcon"></span>
+            </div><br><br>
+            <label class="secret-admin-signup">
+                <input type="checkbox" name="makeAdmin" value="true" id="makeAdmin">
+            </label>
+            <p id="adminConfirm" class="admin-confirm-message">
+                Admin signup enabled
+            </p>
+            <button class="btn btn-success">Login</button>
+        </form>
+        <script>
+            const eyeIcon = document.querySelector("#eyeIcon");;
+            eyeIcon.addEventListener("click", () => {
+                const isHidden = pwd.type === "password";
+                pwd.type = (isHidden) ? "text" : "password";
+                eyeIcon.classList.toggle("bi-eye", !isHidden);
+                eyeIcon.classList.toggle("bi-eye-slash", isHidden);
+            });
+
+            const makeAdmin = document.querySelector("#makeAdmin");
+            const adminConfirm = document.querySelector("#adminConfirm");
+
+            makeAdmin.addEventListener("change", () => {
+                if (makeAdmin.checked) {
+                    adminConfirm.style.display = "block";
+                } else {
+                    adminConfirm.style.display = "none";
+                }
+            });
+        </script>
+
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
+    </body>
+
+</html>
