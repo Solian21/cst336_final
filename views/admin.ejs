@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/header.ejs') %>
+
+<body>
+    <h1 class="bg-info-rgb text-white text-center p-3 m-0">Info Theater</h1>
+    <%- include('partials/navbar.ejs') %>
+
+    <div class="container admin-page mt-5">
+        <div class="admin-panel mx-auto p-4">
+
+            <h2 class="text-center mb-3">Admin Panel</h2>
+            <p class="text-center mb-4">
+                Search for a user to manage their watchlists and admin status.
+            </p>
+
+            <!-- SEARCH BAR -->
+            <form action="/admin" method="GET" class="mb-4">
+                <div class="input-group">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="userSearch"
+                        placeholder="Search by username"
+                        value="<%= userSearch || '' %>"
+                    >
+                    <button class="btn btn-dark" type="submit">Search</button>
+                </div>
+            </form>
+
+            <!-- USER RESULT -->
+            <% if (foundUser) { %>
+                <div class="user-result-card p-4">
+
+                    <h4 class="mb-3">Username: <%= foundUser.username %></h4>
+
+                    <form action="/admin/updateAdmin" method="POST">
+
+                        <input type="hidden" name="userId" value="<%= foundUser.userId %>">
+                        <input type="hidden" name="userSearch" value="<%= userSearch %>">
+
+                        <div class="form-check form-switch mt-4">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="adminToggle"
+                                name="isAdmin"
+                                <%= foundUser.isAdmin ? "checked" : "" %>
+                            >
+                            <label class="form-check-label" for="adminToggle">
+                                Admin privileges
+                            </label>
+                        </div>
+
+                        <button class="btn btn-dark mt-3" type="submit">
+                            Save Changes
+                        </button>
+
+                    </form>
+
+                </div>
+
+            <% } else if (userSearch && userSearch.trim() !== "") { %>
+
+                <p class="text-center text-danger">No user found.</p>
+
+            <% } %>
+
+        </div>
+    </div>
+</body>
+</html>

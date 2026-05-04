@@ -19,6 +19,12 @@
                 <input type="password" id="pwd" name="password">
                 <span class="bi bi-eye loginIcon" id="eyeIcon"></span>
             </div><br><br>
+            <label class="secret-admin-signup">
+                <input type="checkbox" name="makeAdmin" value="true" id="makeAdmin">
+            </label>
+            <p id="adminConfirm" class="admin-confirm-message">
+                Admin signup enabled
+            </p>
             <button class="btn btn-success">Login</button>
         </form>
         <script>
@@ -28,6 +34,17 @@
                 pwd.type = (isHidden) ? "text" : "password";
                 eyeIcon.classList.toggle("bi-eye", !isHidden);
                 eyeIcon.classList.toggle("bi-eye-slash", isHidden);
+            });
+
+            const makeAdmin = document.querySelector("#makeAdmin");
+            const adminConfirm = document.querySelector("#adminConfirm");
+
+            makeAdmin.addEventListener("change", () => {
+                if (makeAdmin.checked) {
+                    adminConfirm.style.display = "block";
+                } else {
+                    adminConfirm.style.display = "none";
+                }
             });
         </script>
 
