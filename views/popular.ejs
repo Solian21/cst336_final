@@ -2,7 +2,20 @@
 <html lang="en">
 <%-include('partials/header.ejs')%>
 <body>
-    <h1 class="bg-info-rgb text-white text-center p-3 m-0">Popular Movies</h1>
+    <h1 class="bg-info-rgb text-white text-center p-3 m-0">Info Theater</h1>
         <%- include('partials/navbar.ejs') %>
+
+    <div class="container mt-4">
+        <h2 class="text-center text-white mb-4">Popular Movies</h2>
+
+        <div class="row">
+            <% topMovies.forEach(movie => { %>
+                <div class="col-md-4 text-center mb-4">
+                    <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="<%= movie.title%>" class="img-fluid rounded shadow">
+                    <p class="mt-2">Release Date: <%=movie.release_date %></p>
+                </div>
+            <% }) %>
+        </div>
+    </div>
 </body>
 </html>
