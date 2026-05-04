@@ -25,6 +25,23 @@ app.get('/signin', (req, res) => {
    res.render('signin.ejs')
 });
 
+//popular movie page
+app.get('/popular', async (req,res)=>{
+   const options = {
+      method: 'GET',
+      headers: {
+         accept: 'application/json',
+         Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZjcyZTdhNTg3OGJhNTYyOGJmMDgzNWNhNGZjMGNmYyIsIm5iZiI6MTc3NDM3MDM4MC4zOCwic3ViIjoiNjljMmJlNGNkOWVlMGEyZGJiN2JjYzMwIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.A6PJgrCtyusFUW9ueoWDMma1nNUU0e_5C-ZDyYg8ye8'
+      }
+   };
+
+   const response = await fetch('https://api.themoviedb.org/3/trending/movie/day', options);
+   const data = await response.json();
+
+   //only first 6
+   const topMovies = data.results.slice(0,6);
+   res.render('popular.ejs', {topMovies});
+})
 
 app.get('/search', async (req, res) => {
    // -----API STUFF -------
