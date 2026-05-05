@@ -18,7 +18,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@google/genai": "^1.50.1",
+    "@google/genai": "^1.52.0",
     "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.8",
     "ejs": "^5.0.1",
