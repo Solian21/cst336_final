@@ -1,15 +1,34 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">User Name</a>
+    <% if (user) { %>
+      <div class="dropdown">
+        <a class="navbar-brand dropdown-toggle" href="#" data-bs-toggle="dropdown">
+          <%= user.username %>
+        </a>
+
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/watchlist">Watchlist</a></li>
+          <li><a class="dropdown-item" href="/settings">Settings</a></li>
+          <li><a class="dropdown-item" href="/edit-account">Edit Account</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    <% } else { %>
+      <a class="navbar-brand" href="/">Movie App</a>
+    <% } %>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="/">Home</a>
         </li>
+
         <li class="nav-item">
           <a class="nav-link" href="/popular">Popular Movies</a>
         </li>
@@ -18,25 +37,28 @@
             <a class="nav-link" href="/logout">Logout</a>
           </li>
         <% } else { %>
+
+        <% if (!user) { %>
           <li class="nav-item">
             <a class="nav-link" href="/signin">Sign In</a>
           </li>
+
           <li class="nav-item">
             <a class="nav-link" href="/signup">Sign Up</a>
           </li>
         <% } %>
-        </li>
+
         <% if (user && user.isAdmin) { %>
           <li class="nav-item">
             <a class="nav-link" href="/admin">Admin</a>
           </li>
         <% } %>
       </ul>
+
       <form class="d-flex ms-auto" method="GET" action="/search">
         <input class="form-control me-2" type="search" name="search" placeholder="Search Movies" aria-label="Search">
         <button class="btn btn-outline-dark" type="submit">Search</button>
       </form>
-
     </div>
   </div>
 </nav>
