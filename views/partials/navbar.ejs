@@ -13,9 +13,6 @@
         <li class="nav-item">
           <a class="nav-link" href="/popular">Popular Movies</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true" href="#">NEW PAGE 2</a>
-        </li>
         <% if (user) { %>
           <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
@@ -37,7 +34,7 @@
       </ul>
       <form class="d-flex ms-auto" method="GET" action="/search">
         <input class="form-control me-2" type="search" name="search" placeholder="Search Movies" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <button class="btn btn-outline-dark" type="submit">Search</button>
       </form>
 
     </div>
