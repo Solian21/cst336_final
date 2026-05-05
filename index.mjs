@@ -136,6 +136,7 @@ app.get('/logout', (req, res) => {
 app.get('/admin', requireAdmin, async (req, res) => {
    const userSearch = req.query.userSearch || "";
    let foundUser = null;
+   let userWatchlist = [];
 
    if (userSearch.trim() !== "") {
       const [rows] = await pool.query(
@@ -147,10 +148,20 @@ app.get('/admin', requireAdmin, async (req, res) => {
 
       if (rows.length > 0) {
          foundUser = rows[0];
+
+         const [watchlistRows] = await pool.query(
+            `SELECT watchlistId, movieId, title, posterPath, overview, dateAdded
+             FROM watchlist
+             WHERE userId = ?
+             ORDER BY dateAdded ASC`,
+            [foundUser.userId]
+         );
+
+         userWatchlist = watchlistRows;
       }
    }
 
-   res.render('admin.ejs', { foundUser, userSearch });
+   res.render('admin.ejs', { foundUser, userSearch, userWatchlist });
 });
 
 app.post('/admin/updateAdmin', requireAdmin, async (req, res) => {
@@ -171,6 +182,40 @@ app.post('/admin/updateAdmin', requireAdmin, async (req, res) => {
    );
 
    res.redirect(`/admin?userSearch=${encodeURIComponent(userSearch)}`);
+});
+
+app.post('/admin/removeWatchlistMovie', requireAdmin, async (req, res) => {
+   const { watchlistId, userSearch } = req.body;
+
+   await pool.query(
+      `DELETE FROM watchlist
+       WHERE watchlistId = ?`,
+      [watchlistId]
+   );
+
+   res.redirect(`/admin?userSearch=${encodeURIComponent(userSearch)}`);
+});
+
+app.post('/admin/deleteUser', requireAdmin, async (req, res) => {
+   const { userId } = req.body;
+
+   if (Number(userId) === req.session.user.userId) {
+      return res.redirect('/admin');
+   }
+
+   await pool.query(
+      `DELETE FROM watchlist
+       WHERE userId = ?`,
+      [userId]
+   );
+
+   await pool.query(
+      `DELETE FROM users
+       WHERE userId = ?`,
+      [userId]
+   );
+
+   res.redirect('/admin');
 });
 
 app.post('/watchlist/add', requireAuth, async (req, res) => {
@@ -326,32 +371,35 @@ app.post('/movieModalAi', async (req, res) => {
    }
 });
 
-// -- I plan to use this for the  watchlist button - Carlos
-app.post('/addToWatchlist', requireAuth, async (req, res) => {
-   const userId = req.session.user.userId;
-   const { title, overview, posterPath } = req.body;
+// // -- I plan to use this for the  watchlist button - Carlos
+// app.post('/addToWatchlist', requireAuth, async (req, res) => {
+//    const userId = req.session.user.userId;
+//    const { title, overview, posterPath } = req.body;
 
-   try {
-      await pool.query(
-         `INSERT INTO watchlist (userId, title, overview, posterPath)
-          VALUES (?, ?, ?, ?)`,
-         [userId, title, overview, posterPath]
-      );
+//    try {
+//       await pool.query(
+//          `INSERT INTO watchlist (userId, title, overview, posterPath)
+//           VALUES (?, ?, ?, ?)`,
+//          [userId, title, overview, posterPath]
+//       );
 
-      res.json({
-         success: true,
-         message: "Movie added to watchlist"
-      });
-   } catch (err) {
-      console.error("Watchlist insert error:", err);
+//       res.json({
+//          success: true,
+//          message: "Movie added to watchlist"
+//       });
+//    } catch (err) {
+//       console.error("Watchlist insert error:", err);
 
-      res.json({
-         success: false,
-         message: "Could not add movie"
-      });
-   }
+//       res.json({
+//          success: false,
+//          message: "Could not add movie"
+//       });
+//    }
+// });
+
+app.get('/settings', requireAuth, (req, res) => {
+   res.render('settings.ejs');
 });
-
 
 app.listen(3000, () => {
    console.log('server started');

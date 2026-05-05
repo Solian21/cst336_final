@@ -2,15 +2,16 @@
 <html lang="en">
 <%- include('partials/header.ejs') %>
 <body>
-    <h1 class="bg-info-rgb text-white text-center p-3 m-0">My Watchlist</h1>
+    <h1 class="bs-info-rgb text-white text-center p-3 m-0">
+    <a href="/" class="text-white text-decoration-none">Info Theater</a></h1>
     <%- include('partials/navbar.ejs') %>
 
     <div class="container mt-5">
+        <h1 class="bg-info-rgb text-white text-center p-3 m-0">My Watchlist</h1>
         <% if (movies.length === 0) { %>
             <div class="watchlist-empty text-center p-4">
                 <h3>Your watchlist is empty.</h3>
                 <p>Search for movies and click the heart to add them here.</p>
-                <a href="/search" class="btn btn-dark">Search Movies</a>
             </div>
         <% } else { %>
             <% movies.forEach(movie => { %>
