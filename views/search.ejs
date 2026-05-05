@@ -9,7 +9,11 @@
     <body>
         <h1 class="bs-info-rgb text-white text-center p-3 m-0"> Movie Search Page </h1>
         <%- include('partials/navbar.ejs') %>
-
+            <% if (added) { %>
+                <div class="alert alert-success text-center m-3">
+                    Movie added to watchlist!
+                </div>
+            <% } %>
             <br>
             <%- include('partials/movie_poster_carousel.ejs') %>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>

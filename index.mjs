@@ -162,6 +162,52 @@ app.post('/admin/updateAdmin', requireAdmin, async (req, res) => {
    res.redirect(`/admin?userSearch=${encodeURIComponent(userSearch)}`);
 });
 
+app.post('/watchlist/add', requireAuth, async (req, res) => {
+   const { movieId, title, posterPath, overview, returnSearch } = req.body;
+
+   await pool.query(
+      `INSERT IGNORE INTO watchlist 
+       (userId, movieId, title, posterPath, overview)
+       VALUES (?, ?, ?, ?, ?)`,
+      [
+         req.session.user.userId,
+         movieId,
+         title,
+         posterPath,
+         overview
+      ]
+   );
+
+   res.redirect(`/search?search=${encodeURIComponent(returnSearch)}&added=true`);
+});
+
+
+app.get('/watchlist', requireAuth, async (req, res) => {
+   const [movies] = await pool.query(
+      `SELECT watchlistId, movieId, title, posterPath, overview, dateAdded
+       FROM watchlist
+       WHERE userId = ?
+       ORDER BY dateAdded ASC`,
+      [req.session.user.userId]
+   );
+
+   res.render('watchlist.ejs', { movies });
+});
+
+app.post('/watchlist/remove', requireAuth, async (req, res) => {
+   const { watchlistId } = req.body;
+
+   await pool.query(
+      `DELETE FROM watchlist
+       WHERE watchlistId = ? AND userId = ?`,
+      [watchlistId, req.session.user.userId]
+   );
+
+   res.redirect('/watchlist');
+});
+
+
+
 //popular movie page
 app.get('/popular', async (req,res)=>{
    const options = {
@@ -208,6 +254,7 @@ app.get('/search', async (req, res) => {
          if (!item.poster_path) return;
 
          movies.push({
+            movieId: item.id,
             title: item.title || item.name || "Untitled",
             posterPath: item.poster_path,
             overview: item.overview || "No description available."
@@ -215,11 +262,24 @@ app.get('/search', async (req, res) => {
       });
    }
 
+   let watchlistMovieIds = [];
+
+   if (req.session.user) {
+      const [watchlistRows] = await pool.query(
+         `SELECT movieId
+         FROM watchlist
+         WHERE userId = ?`,
+         [req.session.user.userId]
+      );
+
+      watchlistMovieIds = watchlistRows.map(row => row.movieId);
+   }
+
+   const added = req.query.added === "true";
+
    console.log("Movies sent to search page:", movies);
+   res.render("search.ejs", { movies, user_search, watchlistMovieIds, added });
 
-
-
-   res.render("search.ejs", { movies });
 });
 
 app.listen(3000, () => {

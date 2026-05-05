@@ -1,6 +1,7 @@
 <% if (movies.length > 0) { %>
 
   <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="width: 300px; margin: auto;">
+    
 
     <div class="carousel-inner">
 
@@ -10,6 +11,23 @@
           class="d-block w-100"
           src="https://image.tmdb.org/t/p/w500<%= movies[0].posterPath %>"
           alt="<%= movies[0].title %> poster">
+
+        <% if (user) { %>
+        <% const firstMovieInWatchlist = watchlistMovieIds.includes(movies[0].movieId); %>
+          <form action="/watchlist/add" method="POST" class="text-center mt-2">
+            <input type="hidden" name="movieId" value="<%= movies[0].movieId %>">
+            <input type="hidden" name="title" value="<%= movies[0].title %>">
+            <input type="hidden" name="posterPath" value="<%= movies[0].posterPath %>">
+            <input type="hidden" name="overview" value="<%= movies[0].overview %>">
+            <input type="hidden" name="returnSearch" value="<%= typeof user_search !== 'undefined' ? user_search : '' %>">
+
+            <button type="submit" class="btn <%= firstMovieInWatchlist ? 'btn-danger' : 'btn-outline-danger' %> watchlist-btn"
+            title="<%= firstMovieInWatchlist ? 'Already in watchlist' : 'Add to watchlist' %>"
+            >
+              ♥
+            </button>
+          </form>
+        <% } %>
       </div>
 
       <!-- REST OF MOVIES -->
@@ -19,7 +37,23 @@
             class="d-block w-100"
             src="https://image.tmdb.org/t/p/w500<%= movies[i].posterPath %>"
             alt="<%= movies[i].title %> poster">
-          
+
+          <% if (user) { %>
+          <% const movieInWatchlist = watchlistMovieIds.includes(movies[i].movieId); %>
+            <form action="/watchlist/add" method="POST" class="text-center mt-2">
+              <input type="hidden" name="movieId" value="<%= movies[i].movieId %>">
+              <input type="hidden" name="title" value="<%= movies[i].title %>">
+              <input type="hidden" name="posterPath" value="<%= movies[i].posterPath %>">
+              <input type="hidden" name="overview" value="<%= movies[i].overview %>">
+              <input type="hidden" name="returnSearch" value="<%= typeof user_search !== 'undefined' ? user_search : '' %>">
+
+              <button type="submit" class="btn <%= movieInWatchlist ? 'btn-danger' : 'btn-outline-danger' %> watchlist-btn"
+              title="<%= movieInWatchlist ? 'Already in watchlist' : 'Add to watchlist' %>"
+              >
+                ♥
+              </button>
+            </form>
+          <% } %>
         </div>
       <% } %>
 
