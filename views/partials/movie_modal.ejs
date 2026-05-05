@@ -9,7 +9,8 @@
 
       <div class="modal-body">
         AI Summary:
-        <div id="movieAiAnswer" style="background-color: #f1f1f1; padding: 15px; border-radius: 10px; min-height: 100px;">
+        <div id="movieAiAnswer"
+          style="background-color: #f1f1f1; padding: 15px; border-radius: 10px; min-height: 100px;">
           Loading...
         </div>
 
@@ -25,7 +26,8 @@
           Add to Watchlist
         </button>
 
-        <div id="geminiQuestionAnswer" style="background-color: #f1f1f1; padding: 15px; border-radius: 10px; margin-top: 15px; display: none;">
+        <div id="geminiQuestionAnswer"
+          style="background-color: #f1f1f1; padding: 15px; border-radius: 10px; margin-top: 15px; display: none;">
         </div>
 
       </div>
@@ -39,12 +41,14 @@
 
   let currentTitle = "";
   let currentOverview = "";
+  let currentPosterPath = "";
 
   movieModal.addEventListener("show.bs.modal", async function (event) {
     const modal = event.relatedTarget;
 
     currentTitle = modal.getAttribute("data-movie-title");
     currentOverview = modal.getAttribute("data-movie-overview");
+    currentPosterPath = modal.getAttribute("data-movie-poster-path");
 
     document.getElementById("movieModalTitle").textContent = currentTitle;
     document.getElementById("movieAiAnswer").textContent = "Loading...";
@@ -60,6 +64,7 @@
       body: JSON.stringify({
         title: currentTitle,
         overview: currentOverview,
+        posterPath: currentPosterPath,
         question: ""
       })
     });
@@ -96,4 +101,21 @@
 
     answerBox.textContent = data.answer;
   });
+
+  document.getElementById("addToWatchlistBtn").addEventListener("click", async function () {
+  const response = await fetch("/addToWatchlist", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      title: currentTitle,
+      overview: currentOverview
+    })
+  });
+
+  const data = await response.json();
+
+  console.log(data);
+});
 </script>
