@@ -1,0 +1,99 @@
+<div class="modal fade" id="movieModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="movieModalTitle">Movie Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        AI Summary:
+        <div id="movieAiAnswer" style="background-color: #f1f1f1; padding: 15px; border-radius: 10px; min-height: 100px;">
+          Loading...
+        </div>
+
+        <hr>
+
+        <label for="userQuestion" class="form-label">Ask Gemini about this movie:</label>
+        <input type="text" id="userQuestion" class="form-control" placeholder="Example: Is this movie good for kids?">
+        <button id="askGeminiBtn" class="btn btn-primary mt-2">
+          Ask
+        </button>
+
+        <button id="addToWatchlistBtn" class="btn btn btn-success mt-2">
+          Add to Watchlist
+        </button>
+
+        <div id="geminiQuestionAnswer" style="background-color: #f1f1f1; padding: 15px; border-radius: 10px; margin-top: 15px; display: none;">
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const movieModal = document.getElementById("movieModal");
+
+  let currentTitle = "";
+  let currentOverview = "";
+
+  movieModal.addEventListener("show.bs.modal", async function (event) {
+    const modal = event.relatedTarget;
+
+    currentTitle = modal.getAttribute("data-movie-title");
+    currentOverview = modal.getAttribute("data-movie-overview");
+
+    document.getElementById("movieModalTitle").textContent = currentTitle;
+    document.getElementById("movieAiAnswer").textContent = "Loading...";
+    document.getElementById("userQuestion").value = "";
+    document.getElementById("geminiQuestionAnswer").style.display = "none";
+    document.getElementById("geminiQuestionAnswer").textContent = "";
+
+    const response = await fetch("/movieModalAi", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: currentTitle,
+        overview: currentOverview,
+        question: ""
+      })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("movieAiAnswer").textContent = data.answer;
+  });
+
+  document.getElementById("askGeminiBtn").addEventListener("click", async function () {
+    const question = document.getElementById("userQuestion").value;
+
+    if (question.trim() === "") {
+      return;
+    }
+
+    const answerBox = document.getElementById("geminiQuestionAnswer");
+    answerBox.style.display = "block";
+    answerBox.textContent = "Thinking...";
+
+    const response = await fetch("/movieModalAi", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: currentTitle,
+        overview: currentOverview,
+        question: question
+      })
+    });
+
+    const data = await response.json();
+
+    answerBox.textContent = data.answer;
+  });
+</script>
