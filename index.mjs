@@ -2,10 +2,13 @@ import express from 'express';
 import session from "express-session";
 import mysql from 'mysql2/promise';
 import bcrypt from "bcrypt";
+import dotenv from 'dotenv';
 import { GoogleGenAI } from "@google/genai";
 
+dotenv.config();
+
 const Ai = new GoogleGenAI({
-   apiKey: "AIzaSyDU7_oR7j-i5u2uH_oqnJnMVjCN7iO3DsA"
+   apiKey: process.env.AI_KEY
 });
 
 const app = express();
@@ -322,6 +325,33 @@ app.post('/movieModalAi', async (req, res) => {
       res.json({ answer: "Sorry, I could not generate a response." });
    }
 });
+
+// -- I plan to use this for the  watchlist button - Carlos
+app.post('/addToWatchlist', requireAuth, async (req, res) => {
+   const userId = req.session.user.userId;
+   const { title, overview, posterPath } = req.body;
+
+   try {
+      await pool.query(
+         `INSERT INTO watchlist (userId, title, overview, posterPath)
+          VALUES (?, ?, ?, ?)`,
+         [userId, title, overview, posterPath]
+      );
+
+      res.json({
+         success: true,
+         message: "Movie added to watchlist"
+      });
+   } catch (err) {
+      console.error("Watchlist insert error:", err);
+
+      res.json({
+         success: false,
+         message: "Could not add movie"
+      });
+   }
+});
+
 
 app.listen(3000, () => {
    console.log('server started');

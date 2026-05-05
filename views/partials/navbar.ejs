@@ -11,7 +11,7 @@
         </ul>
       </div>
     <% } else { %>
-      <a class="navbar-brand" href="/">User Name</a>
+      <a class="navbar-brand" href="/">Movie App</a>
     <% } %>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,20 +32,20 @@
           <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
           </li>
-        <% } else { %>
-          <li class="nav-item">
-            <a class="nav-link" href="/signin">Sign In</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/signup">Sign Up</a>
-          </li>
-        <% } %>
-        </li>
-        <% if (user && user.isAdmin) { %>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin">Admin</a>
-          </li>
-        <% } %>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/signin">Sign In</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/signup">Sign Up</a>
+            </li>
+            <% } %>
+              </li>
+              <% if (user && user.isAdmin) { %>
+                <li class="nav-item">
+                  <a class="nav-link" href="/admin">Admin</a>
+                </li>
+                <% } %>
       </ul>
       <form class="d-flex ms-auto" method="GET" action="/search">
         <input class="form-control me-2" type="search" name="search" placeholder="Search Movies" aria-label="Search">
