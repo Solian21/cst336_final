@@ -139,44 +139,113 @@ app.get('/edit-account', requireAuth, async (req, res) => {
 });
 
 app.post('/edit-username', requireAuth, async (req, res) => {
-   const {user, username} = req.body;
-   let sqlVerify = `
-      SELECT userId
-      FROM users
-      WHERE username = ?`
-   const [rows] = await pool.query(sqlVerify, [username]);
-   if (rows.length != 0) {
-      res.render('edit_account', {user, errorusername:true, errorpassword:false});
-      return;
+   const { username, confirmUsername } = req.body;
+
+   const [userRows] = await pool.query(
+      `SELECT username
+       FROM users
+       WHERE userId = ?`,
+      [req.session.user.userId]
+   );
+
+   if (username !== confirmUsername) {
+      return res.render('settings.ejs', {
+         userInfo: userRows[0],
+         errorusername: "Usernames do not match.",
+         errorpassword: false,
+         success: null
+      });
    }
-   let sql = `
-      UPDATE users
-      SET username = ?
-      WHERE userId = ?`
-   await pool.query(sql, [username, req.session.user.userId]);
-   res.redirect('/')
+
+   const [rows] = await pool.query(
+      `SELECT userId
+       FROM users
+       WHERE username = ? AND userId != ?`,
+      [username, req.session.user.userId]
+   );
+
+   if (rows.length !== 0) {
+      return res.render('settings.ejs', {
+         userInfo: userRows[0],
+         errorusername: "Username already taken.",
+         errorpassword: false,
+         success: null
+      });
+   }
+
+   await pool.query(
+      `UPDATE users
+       SET username = ?
+       WHERE userId = ?`,
+      [username, req.session.user.userId]
+   );
+
+   req.session.user.username = username;
+
+   res.redirect('/settings');
 });
 
 app.post('/edit-password', requireAuth, async (req, res) => {
-   const {user, oldpassword, newpassword} = req.body;
-   let sqlVerify = `
-      SELECT password
-      FROM users
-      WHERE userId = ?`
-   const [rows] = await pool.query(sqlVerify, [req.session.user.userId]);
-   let password = rows[0].password;
-   const passwordMatch = await bcrypt.compare(oldpassword, password);
-   if (!passwordMatch) {
-      res.render('edit_account', {user, errorusername:false, errorpassword:true});
-      return;
+   const { oldpassword, newpassword, confirmPassword } = req.body;
+
+   const [userRows] = await pool.query(
+      `SELECT username, password
+       FROM users
+       WHERE userId = ?`,
+      [req.session.user.userId]
+   );
+
+   const userInfo = {
+      username: userRows[0].username
+   };
+
+   if (newpassword !== confirmPassword) {
+      return res.render('settings.ejs', {
+         userInfo,
+         errorusername: false,
+         errorpassword: "New passwords do not match.",
+         success: null
+      });
    }
-   let sql = `
-      UPDATE users
-      SET password = ?
-      WHERE userId = ?`
+
+   const passwordMatch = await bcrypt.compare(oldpassword, userRows[0].password);
+
+   if (!passwordMatch) {
+      return res.render('settings.ejs', {
+         userInfo,
+         errorusername: false,
+         errorpassword: "Old password does not match.",
+         success: null
+      });
+   }
+
    const hashedPassword = await bcrypt.hash(newpassword, 10);
-   await pool.query(sql, [hashedPassword, req.session.user.userId]);
-   res.redirect('/')
+
+   await pool.query(
+      `UPDATE users
+       SET password = ?
+       WHERE userId = ?`,
+      [hashedPassword, req.session.user.userId]
+   );
+
+   res.redirect('/settings');
+});
+
+app.post('/delete-account', requireAuth, async (req, res) => {
+   await pool.query(
+      `DELETE FROM watchlist
+       WHERE userId = ?`,
+      [req.session.user.userId]
+   );
+
+   await pool.query(
+      `DELETE FROM users
+       WHERE userId = ?`,
+      [req.session.user.userId]
+   );
+
+   req.session.destroy();
+   res.redirect('/');
 });
 
 app.get('/logout', (req, res) => {
@@ -422,8 +491,20 @@ app.post('/movieModalAi', async (req, res) => {
    }
 });
 
-app.get('/settings', requireAuth, (req, res) => {
-   res.render('settings.ejs');
+app.get('/settings', requireAuth, async (req, res) => {
+   const [rows] = await pool.query(
+      `SELECT username
+       FROM users
+       WHERE userId = ?`,
+      [req.session.user.userId]
+   );
+
+   res.render('settings.ejs', {
+      userInfo: rows[0],
+      errorusername: false,
+      errorpassword: false,
+      success: null
+   });
 });
 
 app.listen(3000, () => {

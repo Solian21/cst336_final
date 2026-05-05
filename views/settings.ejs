@@ -4,20 +4,100 @@
 
 <body>
     <h1 class="bs-info-rgb text-white text-center p-3 m-0">
-        <a href="/" class="text-white text-decoration-none">Info Theater</a>
+        <a href="/" class="text-white text-decoration-none">🎬 Info Theater 🎬</a></h1>
     </h1>
 
     <%- include('partials/navbar.ejs') %>
 
     <div class="container mt-5">
         <div class="watchlist-empty text-center p-4">
+
             <h2>User Settings</h2>
 
-            <p class="text-muted">
-                More account settings can be added here later.
+            <p class="mt-3">
+                User: <strong><%= userInfo.username %></strong>
             </p>
+
+            <div id="settingsButtons" class="mt-4">
+                <button class="btn btn-dark m-2" onclick="showUsernameForm()">
+                    Change Username
+                </button>
+
+                <button class="btn btn-dark m-2" onclick="showPasswordForm()">
+                    Change Password
+                </button>
+            </div>
+
+            <form id="usernameForm" action="/edit-username" method="POST" class="w-50 m-auto mt-4" style="display: none;">
+                <label>New Username:</label>
+                <input type="text" name="username" class="form-control mb-3" required>
+
+                <label>Confirm New Username:</label>
+                <input type="text" name="confirmUsername" class="form-control mb-3" required>
+
+                <% if (errorusername) { %>
+                    <p class="text-danger"><%= errorusername %></p>
+                <% } %>
+
+                <button class="btn btn-success" type="submit">Save Changes</button>
+                <button class="btn btn-secondary" type="button" onclick="cancelForms()">Cancel</button>
+            </form>
+
+            <form id="passwordForm" action="/edit-password" method="POST" class="w-50 m-auto mt-4" style="display: none;">
+                <label>Old Password:</label>
+                <input type="password" name="oldpassword" class="form-control mb-3" required>
+
+                <label>New Password:</label>
+                <input type="password" name="newpassword" class="form-control mb-3" required>
+
+                <label>Confirm New Password:</label>
+                <input type="password" name="confirmPassword" class="form-control mb-3" required>
+
+                <% if (errorpassword) { %>
+                    <p class="text-danger"><%= errorpassword %></p>
+                <% } %>
+
+                <button class="btn btn-success" type="submit">Save Changes</button>
+                <button class="btn btn-secondary" type="button" onclick="cancelForms()">Cancel</button>
+            </form>
+
+            <hr class="mt-5">
+
+            <form action="/delete-account" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+                <button class="btn btn-danger" type="submit">Delete Account</button>
+            </form>
+
         </div>
     </div>
+
+    <script>
+        function showUsernameForm() {
+            document.querySelector("#settingsButtons").style.display = "none";
+            document.querySelector("#usernameForm").style.display = "block";
+            document.querySelector("#passwordForm").style.display = "none";
+        }
+
+        function showPasswordForm() {
+            document.querySelector("#settingsButtons").style.display = "none";
+            document.querySelector("#passwordForm").style.display = "block";
+            document.querySelector("#usernameForm").style.display = "none";
+        }
+
+        function cancelForms() {
+            document.querySelector("#settingsButtons").style.display = "block";
+            document.querySelector("#usernameForm").style.display = "none";
+            document.querySelector("#passwordForm").style.display = "none";
+        }
+
+        <% if (errorusername) { %>
+            showUsernameForm();
+        <% } %>
+
+        <% if (errorpassword) { %>
+            showPasswordForm();
+        <% } %>
+    </script>
 </body>
+
 <%- include('partials/footer.ejs') %>
 </html>
