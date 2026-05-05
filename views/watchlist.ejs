@@ -1,16 +1,42 @@
-<!--  
-1.Saved movies from your database
-2. Edit or remove entries
--->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<%- include('partials/header.ejs') %>
 <%- include('partials/footer.ejs') %>
 <body>
-    
+    <h1 class="bg-info-rgb text-white text-center p-3 m-0">My Watchlist</h1>
+    <%- include('partials/navbar.ejs') %>
+
+    <div class="container mt-5">
+        <% if (movies.length === 0) { %>
+            <div class="watchlist-empty text-center p-4">
+                <h3>Your watchlist is empty.</h3>
+                <p>Search for movies and click the heart to add them here.</p>
+                <a href="/search" class="btn btn-dark">Search Movies</a>
+            </div>
+        <% } else { %>
+            <% movies.forEach(movie => { %>
+                <div class="watchlist-item d-flex mb-4 p-3">
+                    <img
+                        src="https://image.tmdb.org/t/p/w200<%= movie.posterPath %>"
+                        alt="<%= movie.title %>"
+                        class="watchlist-poster"
+                    >
+
+                    <div class="watchlist-info ms-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h3><%= movie.title %></h3>
+
+                            <form action="/watchlist/remove" method="POST">
+                                <input type="hidden" name="watchlistId" value="<%= movie.watchlistId %>">
+                                <button class="btn btn-danger btn-sm" type="submit">X</button>
+                            </form>
+                        </div>
+
+                        <p><%= movie.overview || "No description available." %></p>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
 </body>
 </html>
