@@ -2,6 +2,12 @@ import express from 'express';
 import session from "express-session";
 import mysql from 'mysql2/promise';
 import bcrypt from "bcrypt";
+import { GoogleGenAI } from "@google/genai";
+
+const Ai = new GoogleGenAI({
+   apiKey: "AIzaSyDU7_oR7j-i5u2uH_oqnJnMVjCN7iO3DsA"
+});
+
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -18,6 +24,8 @@ app.use((req, res, next) => {
    res.locals.user = req.session.user;
    next();
 });
+
+app.use(express.json());
 
 function requireAuth(req, res, next) {
    if (!req.session.user) {
@@ -147,7 +155,7 @@ app.post('/admin/updateAdmin', requireAdmin, async (req, res) => {
 
    const newAdminValue = isAdmin === "on" ? 1 : 0;
 
-//Not needed but prevents admins from removing themselves
+   //Not needed but prevents admins from removing themselves
    if (Number(userId) === req.session.user.userId && newAdminValue === 0) {
       return res.redirect(`/admin?userSearch=${encodeURIComponent(userSearch)}`);
    }
@@ -209,7 +217,7 @@ app.post('/watchlist/remove', requireAuth, async (req, res) => {
 
 
 //popular movie page
-app.get('/popular', async (req,res)=>{
+app.get('/popular', async (req, res) => {
    const options = {
       method: 'GET',
       headers: {
@@ -222,8 +230,8 @@ app.get('/popular', async (req,res)=>{
    const data = await response.json();
 
    //only first 6
-   const topMovies = data.results.slice(0,6);
-   res.render('popular.ejs', {topMovies});
+   const topMovies = data.results.slice(0, 6);
+   res.render('popular.ejs', { topMovies });
 })
 
 app.get('/search', async (req, res) => {
@@ -281,6 +289,45 @@ app.get('/search', async (req, res) => {
    res.render("search.ejs", { movies, user_search, watchlistMovieIds, added });
 
 });
+
+//  -- AI STUFF -- 
+app.post('/movieModalAi', async (req, res) => {
+   const { title, overview, question } = req.body;
+
+   try {
+      let prompt;
+
+      if (question && question.trim() !== "") {
+         prompt = `
+         The user is asking about the movie "${title}".
+         Movie overview: ${overview}
+
+         User question: ${question}
+         `;
+      } else {
+         prompt = `
+         Write a short summary about the movie and who the target audiance may be, "${title}".
+         Here is the movie overview: ${overview}
+         `;
+      }
+
+      const response = await Ai.models.generateContent({
+         model: "gemini-2.5-flash",
+         contents: prompt
+      });
+
+      res.json({ answer: response.text });
+   } catch (err) {
+      console.error("Gemini error:", err);
+      res.json({ answer: "Sorry, I could not generate a response." });
+   }
+});
+
+// -- I plan to use this for the  watchlist button - Carlos
+app.post('/addToWatchlist', requireAuth, async (req, res) => {
+   
+});
+
 
 app.listen(3000, () => {
    console.log('server started');
