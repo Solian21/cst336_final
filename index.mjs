@@ -323,12 +323,6 @@ app.post('/movieModalAi', async (req, res) => {
    }
 });
 
-// -- I plan to use this for the  watchlist button - Carlos
-app.post('/addToWatchlist', requireAuth, async (req, res) => {
-   
-});
-
-
 app.listen(3000, () => {
    console.log('server started');
 });
