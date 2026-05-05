@@ -128,6 +128,57 @@ app.post('/signin', async (req, res) => {
    }
 });
 
+app.get('/edit-account', requireAuth, async (req, res) => {
+   let sql = `
+      SELECT username
+      FROM users
+      WHERE userId = ?`
+   const [rows] = await pool.query(sql, [req.session.user.userId]);
+   let user = rows[0];
+   res.render('edit_account', {user, errorusername:false, errorpassword:false});
+});
+
+app.post('/edit-username', requireAuth, async (req, res) => {
+   const {user, username} = req.body;
+   let sqlVerify = `
+      SELECT userId
+      FROM users
+      WHERE username = ?`
+   const [rows] = await pool.query(sqlVerify, [username]);
+   if (rows.length != 0) {
+      res.render('edit_account', {user, errorusername:true, errorpassword:false});
+      return;
+   }
+   let sql = `
+      UPDATE users
+      SET username = ?
+      WHERE userId = ?`
+   await pool.query(sql, [username, req.session.user.userId]);
+   res.redirect('/')
+});
+
+app.post('/edit-password', requireAuth, async (req, res) => {
+   const {user, oldpassword, newpassword} = req.body;
+   let sqlVerify = `
+      SELECT password
+      FROM users
+      WHERE userId = ?`
+   const [rows] = await pool.query(sqlVerify, [req.session.user.userId]);
+   let password = rows[0].password;
+   const passwordMatch = await bcrypt.compare(oldpassword, password);
+   if (!passwordMatch) {
+      res.render('edit_account', {user, errorusername:false, errorpassword:true});
+      return;
+   }
+   let sql = `
+      UPDATE users
+      SET password = ?
+      WHERE userId = ?`
+   const hashedPassword = await bcrypt.hash(newpassword, 10);
+   await pool.query(sql, [hashedPassword, req.session.user.userId]);
+   res.redirect('/')
+});
+
 app.get('/logout', (req, res) => {
    req.session.destroy();
    res.redirect('/');
