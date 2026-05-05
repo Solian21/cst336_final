@@ -422,32 +422,6 @@ app.post('/movieModalAi', async (req, res) => {
    }
 });
 
-// // -- I plan to use this for the  watchlist button - Carlos
-// app.post('/addToWatchlist', requireAuth, async (req, res) => {
-//    const userId = req.session.user.userId;
-//    const { title, overview, posterPath } = req.body;
-
-//    try {
-//       await pool.query(
-//          `INSERT INTO watchlist (userId, title, overview, posterPath)
-//           VALUES (?, ?, ?, ?)`,
-//          [userId, title, overview, posterPath]
-//       );
-
-//       res.json({
-//          success: true,
-//          message: "Movie added to watchlist"
-//       });
-//    } catch (err) {
-//       console.error("Watchlist insert error:", err);
-
-//       res.json({
-//          success: false,
-//          message: "Could not add movie"
-//       });
-//    }
-// });
-
 app.get('/settings', requireAuth, (req, res) => {
    res.render('settings.ejs');
 });

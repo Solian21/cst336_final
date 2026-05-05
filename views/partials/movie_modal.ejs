@@ -21,6 +21,10 @@
         <button id="askGeminiBtn" class="btn btn-primary mt-2">
           Ask
         </button>
+        <!-- I wanted to get this working but I ran out of time -->
+        <!-- <button id="addToWatchlistBtn" class="btn btn-success mt-2" data-bs-dismiss="modal">
+          Add to Watchlist
+        </button> -->
 
         <div id="geminiQuestionAnswer"
           style="background-color: #f1f1f1; padding: 15px; border-radius: 10px; margin-top: 15px; display: none;">
@@ -96,32 +100,32 @@
 
     answerBox.textContent = data.answer;
   });
+// Watch listen button that I did not get working
+  // const watchlistBtn = document.getElementById("addToWatchlistBtn");
 
-  const watchlistBtn = document.getElementById("addToWatchlistBtn");
+  // if (watchlistBtn) {
+  //   watchlistBtn.addEventListener("click", async function () {
+  //     const response = await fetch("/watchlist/add", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify({
+  //         title: currentTitle,
+  //         overview: currentOverview,
+  //         posterPath: currentPosterPath
+  //       })
+  //     });
 
-  if (watchlistBtn) {
-    watchlistBtn.addEventListener("click", async function () {
-      const response = await fetch("/addToWatchlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title: currentTitle,
-          overview: currentOverview,
-          posterPath: currentPosterPath
-        })
-      });
+  //     const data = await response.json();
 
-      const data = await response.json();
+  //     console.log(data);
 
-      console.log(data);
-
-      if (data.success) {
-        alert("Movie added to watchlist!");
-      } else {
-        alert(data.message || "Could not add movie.");
-      }
-    });
-  }
+  //     if (data.success) {
+  //       alert("Movie added to watchlist!");
+  //     } else {
+  //       alert(data.message || "Could not add movie.");
+  //     }
+  //   });
+  // }
 </script>
