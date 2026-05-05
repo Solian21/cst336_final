@@ -123,3 +123,26 @@ body {
 .user-result-card {
     color: black;
 }
+
+@media (max-width: 991px) {
+    .navbar-collapse {
+        padding-top: 10px;
+    }
+
+    .navbar-nav {
+        text-align: center;
+    }
+
+    .navbar form {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .navbar form input {
+        width: 100%;
+    }
+
+    .dropdown-menu {
+        text-align: center;
+    }
+}
